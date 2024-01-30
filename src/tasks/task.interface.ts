@@ -3,5 +3,5 @@ import { Document } from 'mongoose';
 export interface Task extends Document {
   title: string;
   description?: string;
-  status: string;
+  status: 'OPEN' | 'IN_PROGRESS' | 'DONE';
 }
