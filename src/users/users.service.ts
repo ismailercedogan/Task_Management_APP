@@ -5,6 +5,7 @@ import {User} from './user.interface';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
+import { ShowUserDto } from './dto/show.user.dto';
 @Injectable()
 export class UsersService {
     constructor(@InjectModel('User') private userModel: Model<User>,
@@ -33,5 +34,19 @@ export class UsersService {
         return {
             access_token: this.jwtService.sign(payload),
         };
+    }
+
+    async getAllUsers(): Promise<ShowUserDto[]>{
+        const users = await this.userModel.find().exec();
+        return users.map(user => ({
+            username: user.username,
+            email: user.email,
+        }));
+    }
+
+    async getbyusername(showUserDto: ShowUserDto): Promise<ShowUserDto | null> {
+        const{username} = showUserDto;
+        const user = await this.userModel.findOne({username});
+        return user? { username: user.username, email: user.email }: null;
     }
 }
